@@ -15,6 +15,7 @@ package template
 
 import (
 	"bytes"
+	"encoding/json"
 	tmplhtml "html/template"
 	"io/ioutil"
 	"net/url"
@@ -143,6 +144,20 @@ var DefaultFuncs = FuncMap{
 	},
 	"stringSlice": func(s ...string) []string {
 		return s
+	},
+	"toJson": func(v ...interface{}) string {
+		var r interface{} = map[string]interface{}{}
+		if len(v) == 1 {
+			r = v[0]
+		}
+		for i := 0; i < len(v) - 1; i += 2 {
+			key := v[i].(string)
+			r.(map[string]interface{})[key] = v[i+1]
+		}
+		if b, err := json.Marshal(r); err == nil {
+			return string(b)
+		}
+		return ""
 	},
 }
 

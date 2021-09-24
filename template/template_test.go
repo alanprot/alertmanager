@@ -370,6 +370,25 @@ func TestTemplateExpansion(t *testing.T) {
 			},
 			exp: "[key2 key4]",
 		},
+		{
+			title: "Template toJson",
+			in:    `{{ . | toJson }}`,
+			data: map[string]string {
+				"t1": "v1",
+				"t2": "v2",
+			},
+			exp: "{\"t1\":\"v1\",\"t2\":\"v2\"}",
+		},
+		{
+			title: "Template toJson multi field",
+			in:    `{{ toJson "GroupLabels" .GroupLabels "firstKey"  .GroupLabels.key1 "Version" 1}}`,
+			data: Data{
+				GroupLabels: KV{
+					"key1": "value1",
+				},
+			},
+			exp: "{\"GroupLabels\":{\"key1\":\"value1\"},\"Version\":1,\"firstKey\":\"value1\"}",
+		},
 	} {
 		tc := tc
 		t.Run(tc.title, func(t *testing.T) {
